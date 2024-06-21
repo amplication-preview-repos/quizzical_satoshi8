@@ -1,0 +1,60 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Property {
+  address      String?
+  agent        Agent?              @relation(fields: [agentId], references: [id])
+  agentId      String?
+  appointments Appointment[]
+  createdAt    DateTime            @default(now())
+  id           String              @id @default(cuid())
+  name         String?
+  price        Float?
+  status       EnumPropertyStatus?
+  updatedAt    DateTime            @updatedAt
+}
+
+model Client {
+  agent        Agent?        @relation(fields: [agentId], references: [id])
+  agentId      String?
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  email        String?
+  id           String        @id @default(cuid())
+  name         String?
+  phone        String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model Appointment {
+  client     Client?   @relation(fields: [clientId], references: [id])
+  clientId   String?
+  createdAt  DateTime  @default(now())
+  date       DateTime?
+  id         String    @id @default(cuid())
+  property   Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?
+  time       DateTime?
+  updatedAt  DateTime  @updatedAt
+}
+
+model Agent {
+  clients    Client[]
+  createdAt  DateTime   @default(now())
+  email      String?
+  id         String     @id @default(cuid())
+  name       String?
+  phone      String?
+  properties Property[]
+  updatedAt  DateTime   @updatedAt
+}
+
+enum EnumPropertyStatus {
+  Option1
+}
